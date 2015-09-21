@@ -956,10 +956,6 @@
           imageData: null};
         if(image!==null){
 
-          console.log(temp_canvas);
-          console.log(ris);
-          console.log(theArea.getSize());
-
           temp_ctx.drawImage(image,
             (center.x-theArea.getSize().w/2)*(image.width/ctx.canvas.width),
             (center.y-theArea.getSize().h/2)*(image.height/ctx.canvas.height),
