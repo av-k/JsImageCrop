@@ -205,7 +205,7 @@
     // return a type string
     CropAreaRectangle.prototype.getType = function() {
       return 'rectangle';
-    }
+    };
 
     CropAreaRectangle.prototype._calcRectangleCorners=function() {
       var size = this.getSize();
@@ -513,7 +513,6 @@
     };
 
     CropArea.prototype.setSize = function (size) {
-
       size = this._processSize(size);
       this._size = this._preventBoundaryCollision(size);
     };
@@ -533,6 +532,10 @@
 
     CropArea.prototype.getMinSize = function () {
       return this._minSize;
+    };
+
+    CropArea.prototype.setFixedSize = function (size) {
+      this._fixedSize = size;
     };
 
     CropArea.prototype.getCenterPoint = function () {
@@ -555,7 +558,7 @@
     CropArea.prototype.getType = function() {
       //default to circle
       return 'circle';
-    }
+    };
 
     /* FUNCTIONS */
     CropArea.prototype._preventBoundaryCollision=function(size) {
@@ -578,6 +581,11 @@
         w: se.x - nw.x,
         h: se.y - nw.y};
 
+      //set fixed area size
+      if (this._fixedSize) {
+        newSize.w = this._fixedSize.w;
+        newSize.h = this._fixedSize.h;
+      }
       //check size (if < min, adjust nw corner)
       if (newSize.w < this._minSize.w) {
         newSize.w = this._minSize.w;
@@ -614,7 +622,8 @@
       //finally, enforce 1:1 aspect ratio for sqaure-like selections
       if (this.getType() === "circle" || this.getType() === "square")
       {
-        newSize = {x: newSize.x,
+        newSize = {
+          x: newSize.x,
           y: newSize.y,
           w: newSize.w,
           h: newSize.h};
@@ -1054,6 +1063,22 @@
         }
       };
 
+      this.setAreaFixedSize=function(size) {
+        if (angular.isUndefined(size))
+        {
+          return;
+        }
+        if (size.length === 2) {
+          size = {
+            x: 0,
+            y: 0,
+            w: size[0],
+            h: size[1]
+          };
+          theArea.setFixedSize(size);
+        }
+      };
+
       this.getResultImageSize=function() {
         if (resImgSize == "selection")
         {
@@ -1195,6 +1220,7 @@
         areaCoords: '=',
         areaType: '@',
         areaMinSize: '=',
+        areaFixedSize: '=',
         resultImageSize: '=',
 
         onChange: '&',
@@ -1283,6 +1309,10 @@
         });
         scope.$watch('areaMinSize',function(){
           cropHost.setAreaMinSize(scope.areaMinSize);
+          updateResultImage(scope);
+        });
+        scope.$watch('areaFixedSize',function(){
+          cropHost.setAreaFixedSize(scope.areaFixedSize);
           updateResultImage(scope);
         });
         scope.$watch('resultImageSize',function(){
