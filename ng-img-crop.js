@@ -581,11 +581,6 @@
         w: se.x - nw.x,
         h: se.y - nw.y};
 
-      //set fixed area size
-      if (this._fixedSize) {
-        newSize.w = this._fixedSize.w;
-        newSize.h = this._fixedSize.h;
-      }
       //check size (if < min, adjust nw corner)
       if (newSize.w < this._minSize.w) {
         newSize.w = this._minSize.w;
@@ -627,6 +622,18 @@
           y: newSize.y,
           w: newSize.w,
           h: newSize.h};
+      }
+
+      //set fixed area size
+      if (this._fixedSize) {
+        newSize.w = this._fixedSize.w;
+        newSize.h = this._fixedSize.h;
+        if (se.x >= canvasW) {
+          newSize.x = canvasW - this._fixedSize.w;
+        }
+        if (se.y >= canvasH) {
+          newSize.y = canvasH - this._fixedSize.h;
+        }
       }
       return newSize;
     };
